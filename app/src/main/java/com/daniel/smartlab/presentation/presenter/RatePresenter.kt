@@ -6,7 +6,7 @@ import com.daniel.smartlab.presentation.view.RateActivity
 class RatePresenter(val view : RateActivity) {
 
     fun save(rating : Rating) {
-
+        print(rating)
     }
 
     fun populateRatings() : List<String> {

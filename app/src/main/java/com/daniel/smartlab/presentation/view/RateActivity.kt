@@ -2,7 +2,6 @@ package com.daniel.smartlab.presentation.view
 
 import android.os.Bundle
 import android.provider.Settings
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -16,7 +15,6 @@ import com.daniel.smartlab.presentation.view.recycler.RatingAdapter
 
 import kotlinx.android.synthetic.main.activity_rate.*
 import kotlinx.android.synthetic.main.content_rate.*
-import java.security.AccessController.getContext
 
 class RateActivity : AppCompatActivity() {
 
@@ -27,7 +25,6 @@ class RateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rate)
-        setSupportActionBar(toolbar)
         config()
 
         ratingsList.layoutManager = LinearLayoutManager(this)
@@ -40,7 +37,7 @@ class RateActivity : AppCompatActivity() {
             presenter.save(Rating(
                 dayChooser.indexOfChild(dayChooser.findViewById(dayChooser.checkedRadioButtonId)),
                     time,
-                    adapter.getRatings(),
+                    adapter.ratings,
                     Settings.Secure.getString(applicationContext.contentResolver,
                             Settings.Secure.ANDROID_ID)
             ))
