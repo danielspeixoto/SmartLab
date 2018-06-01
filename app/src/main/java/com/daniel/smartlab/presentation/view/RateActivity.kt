@@ -4,21 +4,25 @@ import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
+import android.widget.Toast
 import com.daniel.smartlab.R
 import com.daniel.smartlab.presentation.model.Rating
 import com.daniel.smartlab.presentation.presenter.RatePresenter
 import com.daniel.smartlab.presentation.view.helper.timeChooser
 import com.daniel.smartlab.presentation.view.recycler.RatingAdapter
+import dagger.android.AndroidInjection
 
 import kotlinx.android.synthetic.main.activity_rate.*
 import kotlinx.android.synthetic.main.content_rate.*
+import javax.inject.Inject
 
 class RateActivity : AppCompatActivity() {
 
-    val presenter = RatePresenter(this)
+    var presenter = RatePresenter(this)
     var time = 0
     val adapter = RatingAdapter()
 
@@ -34,14 +38,23 @@ class RateActivity : AppCompatActivity() {
         adapter.add(presenter.populateRatings())
 
         fab.setOnClickListener { view ->
-            presenter.save(Rating(
-                dayChooser.indexOfChild(dayChooser.findViewById(dayChooser.checkedRadioButtonId)),
-                    time,
-                    adapter.ratings,
-                    Settings.Secure.getString(applicationContext.contentResolver,
-                            Settings.Secure.ANDROID_ID)
-            ))
+            if(presenter.user != null) {
+                presenter.save(Rating(
+                    dayChooser.indexOfChild(dayChooser.findViewById(dayChooser.checkedRadioButtonId)),
+                        time,
+                        adapter.ratings,presenter.user!!.id
+
+                ))
+            } else {
+                Log.d("Login", "Não conseguiu logar")
+                Toast.makeText(this,"Algum erro ocorreu", Toast.LENGTH_LONG).show()
+            }
         }
+    }
+
+    fun login() {
+        presenter.login(Settings.Secure.getString(applicationContext.contentResolver,
+                Settings.Secure.ANDROID_ID))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -60,10 +73,11 @@ class RateActivity : AppCompatActivity() {
         }
     }
 
+
+
     fun config() {
         timeSeek.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                //TODO Test
                 time = progress
                 timeText.setText(timeChooser(progress))
             }
