@@ -1,4 +1,6 @@
 package com.daniel.smartlab.presentation.model
 
-data class User(val id: String, val deviceId: String) {
+import com.google.gson.annotations.SerializedName
+
+data class User(@SerializedName("_id") val id: String, val deviceId: String) {
 }

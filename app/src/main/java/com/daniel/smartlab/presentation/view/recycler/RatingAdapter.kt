@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.daniel.smartlab.R
+import com.daniel.smartlab.presentation.model.Rating
 
 class RatingAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -32,6 +33,6 @@ class RatingAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun setRating(text: String, toInt: Int) {
-        ratings[text] = toInt
+        ratings[Rating.names[text]!!] = toInt
     }
 }

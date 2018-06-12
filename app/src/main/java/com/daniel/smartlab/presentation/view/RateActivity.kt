@@ -23,13 +23,14 @@ import javax.inject.Inject
 class RateActivity : AppCompatActivity() {
 
     var presenter = RatePresenter(this)
-    var time = 0
+    var time = 1
     val adapter = RatingAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rate)
         config()
+        login()
 
         ratingsList.layoutManager = LinearLayoutManager(this)
         ratingsList.isNestedScrollingEnabled = false
@@ -38,16 +39,19 @@ class RateActivity : AppCompatActivity() {
         adapter.add(presenter.populateRatings())
 
         fab.setOnClickListener { view ->
-            if(presenter.user != null) {
+            if(adapter.ratings.size == 0) {
+                Toast.makeText(this,"Preencha pelo menos uma avaliacao", Toast.LENGTH_LONG).show()
+            } else if(presenter.user == null) {
+                Log.d("Login", "Não conseguiu logar")
+                Toast.makeText(this,"Tente Novamente", Toast.LENGTH_LONG).show()
+            } else {
                 presenter.save(Rating(
                     dayChooser.indexOfChild(dayChooser.findViewById(dayChooser.checkedRadioButtonId)),
                         time,
-                        adapter.ratings,presenter.user!!.id
+                        adapter.ratings,
+                        presenter.user!!.id
 
                 ))
-            } else {
-                Log.d("Login", "Não conseguiu logar")
-                Toast.makeText(this,"Algum erro ocorreu", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -56,24 +60,6 @@ class RateActivity : AppCompatActivity() {
         presenter.login(Settings.Secure.getString(applicationContext.contentResolver,
                 Settings.Secure.ANDROID_ID))
     }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_rate, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when(item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-
 
     fun config() {
         timeSeek.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
@@ -90,5 +76,9 @@ class RateActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    fun showMessage(text  : String) {
+        Toast.makeText(this,text, Toast.LENGTH_LONG).show()
     }
 }
